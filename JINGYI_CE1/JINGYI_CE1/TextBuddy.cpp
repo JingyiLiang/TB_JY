@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -27,7 +28,6 @@ string executeCommand(string filename, string userCommand);
 string deleteLine(string filename, string content);
 string displayAll(string filename);
 string clearAll(string filename);
-
 void showToUser(string content);
 
 int main (int argc, char* argv[]){
@@ -53,6 +53,7 @@ int main (int argc, char* argv[]){
 		string userCommand;
 		getline(cin,userCommand);
 		string feedback = executeCommand(filename, userCommand);
+		showToUser(feedback);
 	}
 }
 
@@ -70,13 +71,14 @@ string executeCommand(string filename, string userCommand){
 		return displayAll(filename);
 	case Delete:
 		return deleteLine(filename, content);
-	case  Clear:
+	case Clear:
 		return clearAll(filename);
 	case Exit:
 		exit(0);
 	case Invalid:
 		sprintf_s(buffer, INVALID_COMMAND_ENTERED.c_str(), userCommand.c_str());
 		return buffer;
+	}
 }
 
 string clearAll(string filename){
@@ -87,7 +89,7 @@ string clearAll(string filename){
 	remove(filename.c_str());
 	rename("newfile.txt", filename.c_str());
 
-	sprinf_s(buffer, CLEARED_ALL_MESSAGE.c_str(),filename.c_str());
+	sprintf_s(buffer, CLEARED_ALL_MESSAGE.c_str(),filename.c_str());
 	return buffer;
 }
 
@@ -98,8 +100,9 @@ string displayAll(string filename){
 
 	ifs.open(filename);
 
-	whie(getline(ifs, line)){
-		cout << i << "." << line << endl;
+	while(getline(ifs, line)){
+		i++;
+		cout << i << "." << line;
 	}
 
 	if(i == 0){
@@ -111,6 +114,7 @@ string displayAll(string filename){
 }
 
 string deleteLine(string filename, string content){
+
 	ifstream ifs;
 	ofstream ofs;
 
@@ -129,9 +133,8 @@ string deleteLine(string filename, string content){
 		if(i != stoi(content)){
 			ofs << line << endl;
 		}
-		else{
+		else
 			deletedLine = line;
-		}
 	}
 
 	ofs.close();
@@ -182,6 +185,9 @@ CommandType determineCommandType(string firstWord){
 	}
 	else if (firstWord == "exit"){
 		return CommandType::Exit;
+	}
+	else if(firstWord == "clear"){
+		return CommandType::Clear;
 	}
 	else return CommandType::Invalid;
 }
