@@ -8,14 +8,14 @@ using namespace std;
 
 enum CommandType {Add = 0, Display = 1, Delete = 2, Clear =3, Exit = 4, Invalid = 5};
 
-const string WELCOME_MESSAGE = "Wellcome to TextBuddy. %s is ready for use";
-const string TERMINATION_MESSAGE = "Enter any key to exit:";
-const string INVALID_COMMAND_ENTERED = "Invalid command: %s";
-const string COMMAND_LINE_PARAMETER_INPUT_ERROR = "ERROR: Usage: TextBuddy.exe filename.txt";
-const string ADDED_MESSAGE = "added to %s: \"%s\"";
+const string MESSAGE_WELCOME = "Wellcome to TextBuddy. %s is ready for use";
+const string MESSAGE_TERMINATION = "Enter any key to exit:";
+const string WARNING_INVALID_COMMAND_ENTERED = "Invalid command: %s";
+const string WARNING_COMMAND_LINE_PARAMETER_INPUT_ERROR = "ERROR: Usage: TextBuddy.exe filename.txt";
+const string MESSAGE_ADDED = "added to %s: \"%s\"";
 const string MESSAGE_DELETED ="deleted from %s: \"%s\"";
-const string EMPTY_MESSAGE = "%s is empty";
-const string  CLEARED_ALL_MESSAGE = "all content deleted from %s";
+const string MESSAGE_EMPTY = "%s is empty";
+const string MESSAGE_CLEARED_ALL = "all content deleted from %s";
 
 char buffer[300];
 
@@ -35,8 +35,8 @@ int main (int argc, char* argv[]){
 	string filename;
 
 	if(argc != 2){
-		showToUser(COMMAND_LINE_PARAMETER_INPUT_ERROR);
-		showToUser(TERMINATION_MESSAGE);
+		showToUser(WARNING_COMMAND_LINE_PARAMETER_INPUT_ERROR);
+		showToUser(MESSAGE_TERMINATION);
 		getchar();
 		exit(0);
 	}
@@ -44,12 +44,12 @@ int main (int argc, char* argv[]){
 	filename = argv[1];
 
 	//write into buffer first
-	sprintf_s(buffer, WELCOME_MESSAGE.c_str(),filename.c_str());
+	sprintf_s(buffer, MESSAGE_WELCOME.c_str(),filename.c_str());
 	showToUser(buffer);
 
 	//always loop untill user enter "exit" command
 	while(true){
-		cout << "Command:";
+		cout << "command:";
 		string userCommand;
 		getline(cin,userCommand);
 		string feedback = executeCommand(filename, userCommand);
@@ -76,7 +76,7 @@ string executeCommand(string filename, string userCommand){
 	case Exit:
 		exit(0);
 	case Invalid:
-		sprintf_s(buffer, INVALID_COMMAND_ENTERED.c_str(), userCommand.c_str());
+		sprintf_s(buffer, WARNING_INVALID_COMMAND_ENTERED.c_str(), userCommand.c_str());
 		return buffer;
 	}
 }
@@ -89,7 +89,7 @@ string clearAll(string filename){
 	remove(filename.c_str());
 	rename("newfile.txt", filename.c_str());
 
-	sprintf_s(buffer, CLEARED_ALL_MESSAGE.c_str(),filename.c_str());
+	sprintf_s(buffer, MESSAGE_CLEARED_ALL.c_str(),filename.c_str());
 	return buffer;
 }
 
@@ -102,11 +102,11 @@ string displayAll(string filename){
 
 	while(getline(ifs, line)){
 		i++;
-		cout << i << "." << line;
+		cout << i << "." << line << endl;
 	}
 
 	if(i == 0){
-		sprintf_s(buffer, EMPTY_MESSAGE.c_str(), filename.c_str());
+		sprintf_s(buffer, MESSAGE_EMPTY.c_str(), filename.c_str());
 		return buffer;
 	}
 
@@ -157,7 +157,7 @@ string addLine(string filename, string content){
 		ofs << content << endl;
 		ofs.close();
 
-		sprintf_s(buffer, ADDED_MESSAGE.c_str(), filename.c_str(),content.c_str());
+		sprintf_s(buffer, MESSAGE_ADDED.c_str(), filename.c_str(),content.c_str());
 		return buffer;
 	}
 
