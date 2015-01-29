@@ -11,12 +11,23 @@ const string WELCOME_MESSAGE = "Wellcome to TextBuddy. %s is ready for use";
 const string TERMINATION_MESSAGE = "Enter any key to exit:";
 const string INVALID_COMMAND_ENTERED = "Invalid command: %s";
 const string COMMAND_LINE_PARAMETER_INPUT_ERROR = "ERROR: Usage: TextBuddy.exe filename.txt";
+const string ADDED_MESSAGE = "added to %s: \"%s\"";
+const string MESSAGE_DELETED ="deleted from %s: \"%s\"";
+const string EMPTY_MESSAGE = "%s is empty";
+const string  CLEARED_ALL_MESSAGE = "all content deleted from %s";
+
 char buffer[300];
 
 CommandType determineCommandType(string firstWord);
+
+string addLine(string filename, string content);
 string removeFirstWord(string userCommand);
 string getFirstWord(string userCommand);
 string executeCommand(string filename, string userCommand);
+string deleteLine(string filename, string content);
+string displayAll(string filename);
+string clearAll(string filename);
+
 void showToUser(string content);
 
 int main (int argc, char* argv[]){
@@ -56,7 +67,7 @@ string executeCommand(string filename, string userCommand){
 	case Add:
 		return addLine(filename, content);
 	case Display:
-		return dispalyAll(filename);
+		return displayAll(filename);
 	case Delete:
 		return deleteLine(filename, content);
 	case  Clear:
@@ -68,10 +79,84 @@ string executeCommand(string filename, string userCommand){
 		return buffer;
 }
 
-	string addLine(string filename, string content){
+string clearAll(string filename){
+	ifstream ifs;
 
+	ifs.open("newfile.txt");
+	ifs.close();
+	remove(filename.c_str());
+	rename("newfile.txt", filename.c_str());
+
+	sprinf_s(buffer, CLEARED_ALL_MESSAGE.c_str(),filename.c_str());
+	return buffer;
+}
+
+string displayAll(string filename){
+	ifstream ifs;
+	string line;
+	int i = 0;
+
+	ifs.open(filename);
+
+	whie(getline(ifs, line)){
+		cout << i << "." << line << endl;
 	}
 
+	if(i == 0){
+		sprintf_s(buffer, EMPTY_MESSAGE.c_str(), filename.c_str());
+		return buffer;
+	}
+
+	return "";
+}
+
+string deleteLine(string filename, string content){
+	ifstream ifs;
+	ofstream ofs;
+
+	ifs.open(filename);
+	ofs.open("newfile.txt");
+
+	string line;
+	string deletedLine;
+	
+	int i=0;
+
+	while(getline(ifs,line)){
+		i++;
+
+		//convert line number to be deleted to int
+		if(i != stoi(content)){
+			ofs << line << endl;
+		}
+		else{
+			deletedLine = line;
+		}
+	}
+
+	ofs.close();
+	ifs.close();
+
+	remove(filename.c_str());
+	rename("newfile.txt", filename.c_str());
+	sprintf_s(buffer, MESSAGE_DELETED.c_str(), filename.c_str(), deletedLine.c_str());
+
+	return buffer;
+}
+
+string addLine(string filename, string content){
+		ofstream ofs;
+		ofs.open(filename,ios::app);
+		//ios::app   The function performs a seek to the end of file
+		//When new bytes are written to the file
+		//they are always appended to the end
+		//even if the position is moved with the ostream::seekp function
+		ofs << content << endl;
+		ofs.close();
+
+		sprintf_s(buffer, ADDED_MESSAGE.c_str(), filename.c_str(),content.c_str());
+		return buffer;
+	}
 
 string removeFirstWord(string userCommand){
 	return userCommand.substr(userCommand.find_first_of(" ")+1);
