@@ -16,7 +16,7 @@ const string MESSAGE_ADDED = "added to %s: \"%s\"";
 const string MESSAGE_DELETED ="deleted from %s: \"%s\"";
 const string MESSAGE_EMPTY = "%s is empty";
 const string MESSAGE_CLEARED_ALL = "all content deleted from %s";
-
+const string MESSAGE_EXIT = "exit";
 char buffer[300];
 
 CommandType determineCommandType(string firstWord);
@@ -74,6 +74,8 @@ string executeCommand(string filename, string userCommand){
 	case Clear:
 		return clearAll(filename);
 	case Exit:
+		sprintf_s(buffer, MESSAGE_EXIT.c_str());
+		showToUser(buffer);
 		exit(0);
 	case Invalid:
 		sprintf_s(buffer, WARNING_INVALID_COMMAND_ENTERED.c_str(), userCommand.c_str());
